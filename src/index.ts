@@ -6,6 +6,21 @@ import { recordAudit, getAuditLogs } from "./audit";
 import { authenticateTenant, createTenant, listTenants } from "./tenants";
 
 const app = Fastify({ logger: true });
+
+app.addHook("onRequest", async (req, reply) => {
+  const protectedPaths = ["/dashboard", "/v1/audit", "/v1/policies"];
+  const isAdminGetTenants = req.url === "/v1/tenants" && req.method === "GET";
+  if (protectedPaths.some(p => req.url.startsWith(p)) || isAdminGetTenants) {
+    const adminPass = process.env.ADMIN_PASSWORD || "admin123";
+    const auth = req.headers.authorization || "";
+    const expected = "Basic " + Buffer.from("admin:" + adminPass).toString("base64");
+    if (auth !== expected) {
+      reply.header("WWW-Authenticate", "Basic realm=\"Admin Control Plane\"");
+      return reply.status(401).send({ error: "Admin authentication required" });
+    }
+  }
+});
+
 let activePolicies: PolicyRule[] = [
   { id: "block-destructive-db", toolPattern: "db_drop_*", action: "BLOCK", enabled: true, reason: "Destructive DB operations prohibited." },
   { id: "cap-stripe-refunds", toolPattern: "stripe_refund", action: "BLOCK", enabled: true, conditions: [{ param: "amount", operator: "gt", value: 500 }], reason: "Refunds over $500 require approval." },
