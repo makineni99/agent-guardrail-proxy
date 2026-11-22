@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Agent Guardrail Proxy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{background:#090d16;color:#e2e8f0;font-family:-apple-system,sans-serif;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b;padding-bottom:16px;margin-bottom:20px}
+h1{color:#34d399;font-size:21px}.sub{color:#94a3b8;font-size:13px;margin-top:3px}.btns{display:flex;gap:8px}
+button{border:0;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:#fff}
+.r{background:#e11d48}.a{background:#d97706}.g{background:#059669}.p{background:#4f46e5;width:100%;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.card{background:#111827;border:1px solid #1e293b;border-radius:8px;padding:16px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}h2{font-size:15px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:8px 4px;border-bottom:1px solid #1e293b}
+.mono{font-family:monospace;font-size:11px}.box{background:#090d16;border:1px solid #1e293b;border-radius:6px;padding:8px;margin-bottom:8px;font-size:12px}
+input,select{width:100%;background:#090d16;border:1px solid #334155;color:#fff;padding:7px;border-radius:5px;font-size:12px;margin-top:6px}
+</style></head><body><div class="wrap">
+<div class="top"><div><h1>Agent Guardrail & Audit Proxy</h1><div class="sub">Runtime Firewall • Native MCP Gateway • SHA-256 Audit Ledger</div></div>
+<div class="btns"><button class="r" onclick="sim('stripe_refund',{amount:950})">Test Block ($950)</button><button class="a" onclick="sim('get_patient',{name:'Alice',ssn:'999-00-1234'})">Test PII Redact</button><button class="g" onclick="sim('stripe_refund',{amount:85})">Test Allow ($85)</button></div></div>
+<div id="stats" class="stats"></div><div class="grid"><div class="card"><h2>Live Cryptographic Audit Stream</h2><table><thead><tr><th>Decision</th><th>Tool</th><th>Payload</th><th>Latency</th><th>SHA-256</th></tr></thead><tbody id="logs"></tbody></table></div>
+<div><div class="card" style="margin-bottom:16px"><h2>Active Policies</h2><div id="pols"></div><form onsubmit="addP(event)"><input id="pId" placeholder="Rule ID" required><input id="pPat" placeholder="Pattern (send_*)" required><input id="pRea" placeholder="Reason" required><button class="p">Deploy Rule</button></form></div>
+<div class="card"><h2>Customer Workspaces & API Keys</h2><div id="tens"></div><form onsubmit="addT(event)"><input id="tName" placeholder="Company Name" required><select id="tPlan"><option value="PRO">PRO ($299/mo)</option><option value="BUSINESS">BUSINESS ($1,499/mo)</option></select><button class="p">Generate API Key</button></form></div></div></div></div>
+<script>
+async function sim(t,a){await fetch("/v1/proxy/execute",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({toolName:t,arguments:a})});load()}
+async function addP(e){e.preventDefault();await fetch("/v1/policies",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:pId.value,toolPattern:pPat.value,action:"BLOCK",reason:pRea.value})});e.target.reset();load()}
+async function addT(e){e.preventDefault();await fetch("/v1/tenants",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:tName.value,plan:tPlan.value})});e.target.reset();load()}
+async function load(){
+const [lR,pR,tR]=await Promise.all([fetch("/v1/audit"),fetch("/v1/policies"),fetch("/v1/tenants")]);
+const {logs}=await lR.json(),{policies}=await pR.json(),{tenants}=await tR.json();
+stats.innerHTML=[["Total",logs.length,"#fff"],["Blocked",logs.filter(x=>x.decision==="BLOCK").length,"#fb7185"],["Redacted",logs.filter(x=>x.decision==="REDACT").length,"#fbbf24"],["Allowed",logs.filter(x=>x.decision==="ALLOW").length,"#34d399"]].map(([k,v,c])=>"<div class='card'><div style='font-size:11px;color:#94a3b8'>"+k+"</div><div style='font-size:24px;font-weight:700;color:"+c+"'>"+v+"</div></div>").join("");
+logs.innerHTML=logs.map(l=>"<tr><td style='font-weight:700'>"+l.decision+"</td><td class='mono' style='color:#93c5fd'>"+l.toolName+"</td><td class='mono'>"+JSON.stringify(l.sanitizedArguments)+"</td><td>"+l.latencyMs+"ms</td><td class='mono' style='color:#64748b'>"+l.hash.slice(0,10)+"...</td></tr>").join("");
+pols.innerHTML=policies.map(p=>"<div class='box'><b style='color:#818cf8'>"+p.id+"</b> ["+p.action+"]<div style='color:#94a3b8'>Pattern: "+p.toolPattern+"</div></div>").join("");
+tens.innerHTML=tenants.map(t=>"<div class='box'><b>"+t.name+"</b> ("+t.plan+")<div class='mono' style='color:#34d399'>"+t.apiKey+"</div><div style='color:#94a3b8'>Usage: "+t.usageCount+" / "+t.monthlyQuota+"</div></div>").join("");
+}load();
+</script></body></html>

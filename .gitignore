@@ -1,0 +1,4 @@
+node_modules
+*.jsonl
+tenants.json
+.DS_Store
