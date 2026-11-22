@@ -1,9 +1,11 @@
+import { initDb } from "./db";
 import Fastify from "fastify";
 import fs from "node:fs";
 import path from "node:path";
 import { evaluatePolicy, PolicyRule, ToolCallRequest } from "./engine";
 import { recordAudit, getAuditLogs } from "./audit";
-import { authenticateTenant, createTenant, listTenants } from "./tenants";
+import { authenticateTenant, createTenant, listTenants, loadTenantsFromDb } from "./tenants";
+import { loadAuditFromDb } from "./audit";
 
 const app = Fastify({ logger: true });
 
@@ -67,4 +69,4 @@ app.post<{ Body: any }>("/v1/mcp", async (request, reply) => {
 
 app.get("/", async (_, reply) => reply.type("text/html").send(fs.readFileSync(path.join(process.cwd(), "public", "index.html"), "utf-8")));
 app.get("/dashboard", async (_, reply) => reply.type("text/html").send(fs.readFileSync(path.join(process.cwd(), "public", "dashboard.html"), "utf-8")));
-app.listen({ port: 8080, host: "0.0.0.0" }, (err) => { if (err) process.exit(1); });
+initDb().then(() => Promise.all([loadTenantsFromDb(), loadAuditFromDb()])).then(() => app.listen({ port: 8080, host: "0.0.0.0" }, (err) => { if (err) process.exit(1); }));
