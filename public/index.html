@@ -2,43 +2,51 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}body{background:#090d16;color:#e2e8f0;font-family:-apple-system,sans-serif;line-height:1.5}
 .nav{max-width:1040px;margin:0 auto;padding:20px;display:flex;justify-content:space-between;align-items:center}
-.hero{max-width:760px;margin:48px auto;text-align:center;padding:0 20px}
-h1{font-size:40px;font-weight:800;letter-spacing:-0.02em;color:#fff}h1 span{color:#34d399}
-.lead{color:#94a3b8;font-size:17px;margin:16px 0 28px}
-.box{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:24px;max-width:520px;margin:0 auto;text-align:left}
+.hero{max-width:780px;margin:36px auto;text-align:center;padding:0 20px}
+h1{font-size:38px;font-weight:800;letter-spacing:-0.02em;color:#fff}h1 span{color:#34d399}
+.lead{color:#94a3b8;font-size:16px;margin:14px 0 24px}
+.box{background:#111827;border:1px solid #1e293b;border-radius:12px;padding:22px;max-width:580px;margin:0 auto;text-align:left}
 input{width:100%;background:#090d16;border:1px solid #334155;color:#fff;padding:11px;border-radius:6px;font-size:14px;margin-top:8px}
-button{width:100%;background:#10b981;color:#052e16;font-weight:700;border:0;padding:12px;border-radius:6px;font-size:14px;cursor:pointer;margin-top:12px}
-pre{background:#090d16;border:1px solid #1e293b;padding:14px;border-radius:8px;font-size:12px;color:#93c5fd;overflow-x:auto;margin-top:14px}
-.tiers{max-width:960px;margin:48px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 20px}
-.tcard{background:#111827;border:1px solid #1e293b;border-radius:10px;padding:20px}.price{font-size:26px;font-weight:700;color:#fff;margin:8px 0}
+button,.btn{display:block;text-align:center;text-decoration:none;width:100%;background:#10b981;color:#052e16;font-weight:700;border:0;padding:11px;border-radius:6px;font-size:14px;cursor:pointer;margin-top:12px}
+pre{background:#090d16;border:1px solid #1e293b;padding:12px;border-radius:8px;font-size:12px;color:#93c5fd;overflow-x:auto;margin-top:8px}
+.tiers{max-width:960px;margin:40px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 20px}
+.tcard{background:#111827;border:1px solid #1e293b;border-radius:10px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}.price{font-size:26px;font-weight:700;color:#fff;margin:8px 0}
 </style></head><body>
 <div class="nav"><b style="color:#34d399;font-size:16px">AgentGuardrail</b><a href="/dashboard" style="color:#94a3b8;text-decoration:none;font-size:13px">Control Plane →</a></div>
 <div class="hero">
   <h1>Deterministic Runtime Firewall for <span>Autonomous AI Agents</span></h1>
-  <p class="lead">Block unauthorized tool calls, redact PII in &lt;2ms, and generate SHA-256 tamper-evident audit logs for MCP &amp; custom agents. Drop in 2 lines of code.</p>
+  <p class="lead">Block unauthorized tool calls, redact PII in &lt;2ms, and generate SHA-256 tamper-evident audit logs for MCP &amp; custom agents.</p>
   <div class="box">
     <div style="font-weight:600;font-size:14px">Start Free — Instant Production API Key</div>
     <form onsubmit="signup(event)"><input id="co" placeholder="Company or Project Name" required><button type="submit">Generate Live API Key →</button></form>
     <div id="out" style="display:none;margin-top:16px">
       <div style="font-size:12px;color:#34d399;font-weight:600">✓ Workspace Provisioned! Your API Key:</div>
       <pre id="keyBox"></pre>
-      <div style="font-size:12px;color:#94a3b8;margin-top:10px">Drop-in Python Quickstart:</div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:10px">1. Python Quickstart:</div>
       <pre id="codeBox"></pre>
+      <div style="font-size:12px;color:#94a3b8;margin-top:10px">2. Native MCP Gateway Endpoint (JSON-RPC 2.0):</div>
+      <pre id="mcpBox"></pre>
     </div>
   </div>
 </div>
 <div class="tiers">
-  <div class="tcard"><b>Starter</b><div class="price">$0<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">5,000 guarded tool calls/mo<br>REST &amp; MCP Gateway<br>7-day SHA-256 audit log</div></div>
-  <div class="tcard" style="border-color:#10b981"><b style="color:#34d399">Pro Team</b><div class="price">$299<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">100,000 guarded calls/mo<br>Custom PII &amp; spend rules<br>90-day immutable audit retention</div></div>
-  <div class="tcard"><b>Business</b><div class="price">$1,499<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">1,000,000+ calls/mo<br>HIPAA / SOC2 compliance export<br>SSO &amp; dedicated policy engine</div></div>
+  <div class="tcard"><div><b>Starter</b><div class="price">$0<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">5,000 guarded calls/mo<br>REST &amp; MCP Gateway<br>SHA-256 audit ledger</div></div><a href="#co" class="btn" style="background:#1e293b;color:#fff">Start Free</a></div>
+  <div class="tcard" style="border-color:#10b981"><div><b style="color:#34d399">Pro Team</b><div class="price">$299<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">100,000 guarded calls/mo<br>Custom PII &amp; spend rules<br>90-day Postgres audit retention</div></div><a id="proBtn" href="#" class="btn">Upgrade to Pro →</a></div>
+  <div class="tcard"><div><b>Business</b><div class="price">$1,499<span style="font-size:13px;color:#94a3b8">/mo</span></div><div style="font-size:13px;color:#94a3b8">1,000,000+ calls/mo<br>HIPAA / SOC2 compliance export<br>SSO &amp; dedicated policy engine</div></div><a id="bizBtn" href="#" class="btn" style="background:#4f46e5;color:#fff">Upgrade to Business →</a></div>
 </div>
 <script>
+let wsId="", cfg={};
+fetch("/v1/config").then(r=>r.json()).then(c=>{cfg=c;updateLinks();});
+function updateLinks(){
+  const q=wsId?"?client_reference_id="+wsId:"";
+  proBtn.href=(cfg.proLink||"#")+q; bizBtn.href=(cfg.bizLink||"#")+q;
+}
 async function signup(e){
   e.preventDefault();
   const r=await fetch("/v1/tenants",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:co.value,plan:"FREE"})});
-  const {tenant}=await r.json();
-  out.style.display="block";
-  keyBox.textContent=tenant.apiKey;
+  const {tenant}=await r.json(); wsId=tenant.id; updateLinks();
+  out.style.display="block"; keyBox.textContent=tenant.apiKey;
   codeBox.textContent='from sdk.guardrail import AgentGuardrail\nguard = AgentGuardrail("'+tenant.apiKey+'", base_url="'+location.origin+'")\nres = guard.execute("stripe_refund", {"amount": 750})';
+  mcpBox.textContent='curl -X POST '+location.origin+'/v1/mcp \\\n  -H "x-api-key: '+tenant.apiKey+'" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"stripe_refund","arguments":{"amount":750}}}\'';
 }
 </script></body></html>

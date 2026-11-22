@@ -68,5 +68,19 @@ app.post<{ Body: any }>("/v1/mcp", async (request, reply) => {
 });
 
 app.get("/", async (_, reply) => reply.type("text/html").send(fs.readFileSync(path.join(process.cwd(), "public", "index.html"), "utf-8")));
+
+app.get("/v1/config", async () => ({ proLink: process.env.STRIPE_PRO_LINK || "#", bizLink: process.env.STRIPE_BIZ_LINK || "#" }));
+app.post<{ Body: any }>("/v1/webhooks/stripe", async (req, reply) => {
+  const ev = req.body;
+  if (ev?.type === "checkout.session.completed") {
+    const wsId = ev.data?.object?.client_reference_id;
+    const amt = ev.data?.object?.amount_total || 0;
+    const plan = amt >= 100000 ? "BUSINESS" : "PRO";
+    const quota = plan === "BUSINESS" ? 1000000 : 100000;
+    const { pool } = await import("./db");
+    if (pool && wsId) await pool.query("UPDATE tenants SET plan=$1, monthly_quota=$2 WHERE id=$3", [plan, quota, wsId]);
+  }
+  return reply.send({ received: true });
+});
 app.get("/dashboard", async (_, reply) => reply.type("text/html").send(fs.readFileSync(path.join(process.cwd(), "public", "dashboard.html"), "utf-8")));
 initDb().then(() => Promise.all([loadTenantsFromDb(), loadAuditFromDb()])).then(() => app.listen({ port: 8080, host: "0.0.0.0" }, (err) => { if (err) process.exit(1); }));
